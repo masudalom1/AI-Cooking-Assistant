@@ -128,6 +128,23 @@ router.get("/recent", protectRoute, async (req, res) => {
   }
 });
 
+// ✅ Get all recipes (no user filtering)
+router.get("/all", async (req, res) => {
+  try {
+    const allRecipes = await Recipe.find().sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: allRecipes.length,
+      recipes: allRecipes,
+    });
+  } catch (err) {
+    console.error("Fetch all recipes error:", err.message);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+
 export default router;
 
 function buildPrompt({ ingredients, servings, diet, cuisine }) {
