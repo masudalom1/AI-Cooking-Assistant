@@ -48,7 +48,7 @@ router.post("/", protectRoute, async (req, res) => {
       success: true,
       recipe: recipeJSON,
       imageUrl: recipeJSON.imageUrl || null,
-      
+      _id:recipeJSON._id
     });
   } catch (err) {
     console.error("Recipe Generation Error:", err.message);
