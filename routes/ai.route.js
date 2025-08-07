@@ -45,11 +45,12 @@ router.post("/", protectRoute, async (req, res) => {
     await newRecipe.save();
 
     return res.status(200).json({
-      success: true,
-      recipe: recipeJSON,
-      imageUrl: recipeJSON.imageUrl || null,
-      _id:recipeJSON._id
-    });
+  success: true,
+  recipe: recipeJSON,
+  imageUrl: recipeJSON.imageUrl || null,
+  _id: newRecipe._id  // ✅ correct
+});
+
   } catch (err) {
     console.error("Recipe Generation Error:", err.message);
     return res.status(500).json({ error: "Internal Server Error" });
