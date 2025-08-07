@@ -55,20 +55,25 @@ router.post("/", protectRoute, async (req, res) => {
   }
 });
 
-// ✅ Toggle isSaved status for a recipe
+// Toggle save/unsave a recipe by its ID
 router.patch("/save/:id", protectRoute, async (req, res) => {
   try {
     const recipeId = req.params.id;
-    const userId = req.user._id;
 
-    console.log("Trying to find recipe", recipeId, "for user", userId);
+    if (!recipeId) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing recipe ID",
+      });
+    }
 
-    const recipe = await Recipe.findOne({ _id: recipeId, userId });
+    const recipe = await Recipe.findById(recipeId);
 
     if (!recipe) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Recipe not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Recipe not found",
+      });
     }
 
     // Toggle isSaved
@@ -82,7 +87,11 @@ router.patch("/save/:id", protectRoute, async (req, res) => {
     });
   } catch (err) {
     console.error("Save toggle error:", err.message);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: err.message,
+    });
   }
 });
 
