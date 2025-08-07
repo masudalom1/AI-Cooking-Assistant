@@ -50,7 +50,7 @@ router.post("/", protectRoute, async (req, res) => {
       imageUrl: recipeJSON.imageUrl || null,
       _id: newRecipe._id, // ✅ correct
     });
-    
+
   } catch (err) {
     console.error("Recipe Generation Error:", err.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -154,6 +154,38 @@ router.get("/all", async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
+
+// DELETE a recipe by ID
+router.delete("/:id", protectRoute, async (req, res) => {
+  try {
+    const recipeId = req.params.id;
+    const userId = req.user._id;
+
+    const recipe = await Recipe.findOne({ _id: recipeId, userId });
+
+    if (!recipe) {
+      return res.status(404).json({
+        success: false,
+        message: "Recipe not found or unauthorized access",
+      });
+    }
+
+    await Recipe.deleteOne({ _id: recipeId });
+
+    res.status(200).json({
+      success: true,
+      message: "Recipe deleted successfully",
+    });
+  } catch (err) {
+    console.error("Delete recipe error:", err.message);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: err.message,
+    });
+  }
+});
+
 
 export default router;
 
